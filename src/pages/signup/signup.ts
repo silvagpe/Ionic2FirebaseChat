@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, Loading, AlertController } from 'ionic-angular';
 import { FormBuilder, FormGroup, Validator, Validators } from '@angular/forms';
 
+import { AuthService } from '../../providers/auth.service';
 import { UserService } from './../../providers/user.service';
-import { Guid } from './../../util/guid';
 
+import { HomePage } from '../home/home';
+import * as firebase from 'firebase/app';
 
 @IonicPage()
 @Component({
@@ -16,7 +18,10 @@ export class SignupPage {
   signupForm: FormGroup;
 
   constructor(
+    public alertCtrl: AlertController,
+    public authService: AuthService,
     public formBuilder: FormBuilder,
+    public loadingCtrl: LoadingController,
     public navCtrl: NavController,
     public navParams: NavParams,
     public userService: UserService) {
@@ -38,12 +43,56 @@ export class SignupPage {
 
   onSubmit(): void {
 
-    let uuid = Guid.newGuid();
-    this.userService.create(this.signupForm.value, uuid)
-    .then(() => {
-      console.log("User registred!");
+    let loading: Loading = this.showLoading();
+    let formUser = this.signupForm.value;
+
+    this.authService.createAuthUser({
+      email: formUser.email,
+      password: formUser.password
+    })
+      .then((authUser: firebase.User) => {
+
+
+        //Remove esse atributo do objeto
+        delete formUser.password;
+
+        let uuid: string = authUser.user.uid;
+
+        this.userService.create(formUser, uuid)
+          .then(() => {
+            console.log("User registred!");
+            this.navCtrl.setRoot(HomePage);
+            loading.dismiss();
+          })
+          .catch((error: any) => {
+            console.log(error);
+            loading.dismiss();
+            this.showAlert(error);
+          });
+
+      })
+      .catch((error: any) => {
+        console.log(error);
+        loading.dismiss();
+        this.showAlert(error);
+      });;
+  }
+
+  private showLoading(): Loading {
+    let loading: Loading = this.loadingCtrl.create({
+      content: 'Please wait...'
     });
 
+    loading.present();
+
+    return loading;
+  }
+
+  private showAlert(message: string): void {
+    this.alertCtrl.create({
+      message: message,
+      buttons: ['Ok']
+    }).present();
   }
 
 }

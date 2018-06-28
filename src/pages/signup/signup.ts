@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, LoadingController, Loading, AlertController } from 'ionic-angular';
 import { FormBuilder, FormGroup, Validator, Validators } from '@angular/forms';
 
+import 'rxjs/add/operator/first';
+
 import { AuthService } from '../../providers/auth.service';
 import { UserService } from './../../providers/user.service';
 
@@ -45,37 +47,48 @@ export class SignupPage {
 
     let loading: Loading = this.showLoading();
     let formUser = this.signupForm.value;
-
-    this.authService.createAuthUser({
-      email: formUser.email,
-      password: formUser.password
-    })
-      .then((authUser: firebase.User) => {
+    let username: string = formUser.username;
 
 
-        //Remove esse atributo do objeto
-        delete formUser.password;
+    this.userService.userExists(username)
+      .first()
+      .subscribe((userExists: boolean) => {
 
-        let uuid: string = authUser.user.uid;
+        if (!userExists) {
 
-        this.userService.create(formUser, uuid)
-          .then(() => {
-            console.log("User registred!");
-            this.navCtrl.setRoot(HomePage);
-            loading.dismiss();
-          })
-          .catch((error: any) => {
+          this.authService.createAuthUser({
+            email: formUser.email,
+            password: formUser.password
+          }).then((authUser: firebase.User) => {
+
+            delete formUser.password;
+            let uuid: string = authUser.uid;
+
+            this.userService.create(formUser, uuid)
+              .then(() => {
+                console.log('Usuario cadastrado!');
+                this.navCtrl.setRoot(HomePage);
+                loading.dismiss();
+              }).catch((error: any) => {
+                console.log(error);
+                loading.dismiss();
+                this.showAlert(error);
+              });
+
+          }).catch((error: any) => {
             console.log(error);
             loading.dismiss();
             this.showAlert(error);
           });
 
-      })
-      .catch((error: any) => {
-        console.log(error);
-        loading.dismiss();
-        this.showAlert(error);
-      });;
+        } else {
+
+          this.showAlert(`O username ${username} já está sendo usado em outra conta!`);
+          loading.dismiss();
+
+        }
+
+      });
   }
 
   private showLoading(): Loading {

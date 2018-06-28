@@ -10,12 +10,20 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 
 import { MyApp } from './app.component';
+import { ChatPage } from './../pages/chat/chat';
 import { HomePage } from '../pages/home/home';
 import { SignupPage } from '../pages/signup/signup';
+import { SigninPage } from '../pages/signin/signin';
 
-import { UserService } from './../providers/user.service';
-import { BaseService } from '../providers/base.service';
+
 import { AuthService } from '../providers/auth.service';
+import { ChatService } from './../providers/chat.service';
+import { MessageService } from './../providers/message.service';
+import { UserService } from './../providers/user.service';
+
+import { CapitalizePipe } from './../pipes/capitalize.pipe';
+import { CustomLoggedHeaderComponent } from '../components/custom-logged-header/custom-logged-header';
+
 
 
 const firebaseAppConfig: FirebaseAppConfig = {
@@ -29,8 +37,12 @@ const firebaseAppConfig: FirebaseAppConfig = {
 
 @NgModule({
   declarations: [
-    MyApp,
+    CapitalizePipe,
+    ChatPage,
+    CustomLoggedHeaderComponent,
     HomePage,
+    MyApp,
+    SigninPage,
     SignupPage
   ],
   imports: [
@@ -43,16 +55,21 @@ const firebaseAppConfig: FirebaseAppConfig = {
   ],
   bootstrap: [IonicApp],
   entryComponents: [
+    ChatPage,
     MyApp,
     HomePage,
+    SigninPage,
     SignupPage
   ],
   providers: [
+    AuthService,
+    ChatService,
+    MessageService,
     StatusBar,
     SplashScreen,
     UserService,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
-    AuthService,
+
   ]
 })
 export class AppModule { }

@@ -41,18 +41,4 @@ export abstract class BaseService {
       .map(action => ({ $key: action.key, ...action.payload.val() }));
   }
 
-  /*
-  mapListKeys<T>(list: AngularFireList<T>): Observable<T[]> {
-    return list
-      .snapshotChanges()
-      .map(actions => actions.map(action => ({ $key: action.key, ...action.payload.val() })));
-  }
-
-  mapObjectKey<T>(object: AngularFireObject<T>): Observable<T> {
-    return object
-      .snapshotChanges()
-      .map(action => ({ $key: action.key, ...action.payload.val() }));
-  }
-  */
-
 }

@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
 import { AngularFireAuth } from 'angularfire2/auth';
 
 import { BaseService } from "./base.service";
@@ -11,7 +11,7 @@ export class AuthService extends BaseService {
 
   constructor(
     public afAuth: AngularFireAuth,
-    public http: HttpClient) {
+    public http: Http) {
 
       super();
       console.log('Hello AuthProvider Provider');

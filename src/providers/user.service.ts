@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
 
 import { AngularFireDatabase, AngularFireObject, AngularFireList } from "angularfire2/database";
 import { BaseService } from './base.service';
@@ -24,7 +24,7 @@ export class UserService extends BaseService {
     public afAuth: AngularFireAuth,
     public db: AngularFireDatabase,
     public firebaseApp: FirebaseApp,
-    public http: HttpClient) {
+    public http: Http) {
 
     super();
     this.listenAuthState();

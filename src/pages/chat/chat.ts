@@ -1,9 +1,10 @@
 import { AuthService } from '../../providers/auth.service';
 import { AngularFireList, AngularFireObject } from 'angularfire2/database';
-import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { Content, NavController, NavParams } from 'ionic-angular';
 
 import * as firebase from 'firebase/app';
+import { Observable } from 'rxjs/Observable';
 
 import { Chat } from '../../models/chat.model';
 import { User } from './../../models/user.model';
@@ -19,11 +20,14 @@ import { UserService } from './../../providers/user.service';
 })
 export class ChatPage {
 
+  @ViewChild(Content) content: Content;
   messages: AngularFireList<Message>;
+  viewMessages: Observable<Message[]>;
+
   pageTitle: string;
   sender: User;
   recipient: User;
-  newMessage : string;
+  newMessage: string;
 
   private chat1: AngularFireObject<Chat>;
   private chat2: AngularFireObject<Chat>;
@@ -63,6 +67,14 @@ export class ChatPage {
         this.messages = this.messageService
           .getMessages(this.sender.$key, this.recipient.$key);
 
+        let doSubscription = () => {
+          this.viewMessages = this.messageService.mapListKeys<Message>(this.messages);
+          this.viewMessages
+            .subscribe((messages: Message[]) => {
+              this.scrollToBottom();
+            });
+        };
+
         //Caso não exista mensagens para o conjunto de chaves, tenta consutlar
         //pelo conjunto inverso.
         this.messages
@@ -75,10 +87,10 @@ export class ChatPage {
               this.messages = this.messageService
                 .getMessages(this.recipient.$key, this.sender.$key);
 
-              //doSubscription();
+              doSubscription();
 
             } else {
-              //doSubscription();
+              doSubscription();
             }
 
           });
@@ -94,27 +106,36 @@ export class ChatPage {
     if (newMessage) {
 
       let currentTimestamp: Object = firebase.database.ServerValue.TIMESTAMP;
-      let message : Message = new Message(this.sender.$key, newMessage, currentTimestamp);
+      let message: Message = new Message(this.sender.$key, newMessage, currentTimestamp);
 
       this.messageService.create(message, this.messages)
-      .then(() => {
-        this.chat1
-          .update({
-            lastMessage: newMessage,
-            timestamp: currentTimestamp
-          });
+        .then(() => {
+          this.chat1
+            .update({
+              lastMessage: newMessage,
+              timestamp: currentTimestamp
+            });
 
-        this.chat2
-          .update({
-            lastMessage: newMessage,
-            timestamp: currentTimestamp
-          });
+          this.chat2
+            .update({
+              lastMessage: newMessage,
+              timestamp: currentTimestamp
+            });
 
 
-      });
+        });
 
     }
 
   }
+
+  private scrollToBottom(duration?: number): void {
+    setTimeout(() => {
+      if (this.content._scroll) {
+        this.content.scrollToBottom(duration || 300);
+      }
+    }, 50);
+  }
+
 
 }

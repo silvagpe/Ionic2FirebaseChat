@@ -15,7 +15,6 @@ import { HomePage } from '../pages/home/home';
 import { SignupPage } from '../pages/signup/signup';
 import { SigninPage } from '../pages/signin/signin';
 
-
 import { AuthService } from '../providers/auth.service';
 import { ChatService } from './../providers/chat.service';
 import { MessageService } from './../providers/message.service';
@@ -23,6 +22,7 @@ import { UserService } from './../providers/user.service';
 
 import { CapitalizePipe } from './../pipes/capitalize.pipe';
 import { CustomLoggedHeaderComponent } from '../components/custom-logged-header/custom-logged-header';
+import { MessageBoxComponent } from './../components/message-box/message-box';
 
 
 
@@ -41,6 +41,7 @@ const firebaseAppConfig: FirebaseAppConfig = {
     ChatPage,
     CustomLoggedHeaderComponent,
     HomePage,
+    MessageBoxComponent,
     MyApp,
     SigninPage,
     SignupPage

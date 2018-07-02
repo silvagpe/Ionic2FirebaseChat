@@ -13,6 +13,7 @@ import { Observable } from 'rxjs';
 import 'rxjs/add/operator/catch';
 
 import * as firebase from 'firebase/app';
+import "firebase/storage";
 
 @Injectable()
 export class UserService extends BaseService {
@@ -59,6 +60,12 @@ export class UserService extends BaseService {
       .catch(this.handlePromiseError);
   }
 
+  edit(user: {name: string, username: string, photo: string}): Promise<void> {
+    return this.currentUser
+      .update(user)
+      .catch(this.handlePromiseError);
+  }
+
   userExists(username: string): Observable<boolean> {
     return this.db.list(`/users`,
       (ref: firebase.database.Reference) => ref.orderByChild('username').equalTo(username)
@@ -72,5 +79,14 @@ export class UserService extends BaseService {
 
   get(userId: string): AngularFireObject<User> {
     return this.db.object<User>(`/users/${userId}`);
+  }
+
+
+  uploadPhoto(file: File, userId: string): firebase.storage.UploadTask {
+    return this.firebaseApp
+      .storage()
+      .ref()
+      .child(`/users/${userId}`)
+      .put(file);
   }
 }

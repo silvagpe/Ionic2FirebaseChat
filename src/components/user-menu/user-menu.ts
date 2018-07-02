@@ -4,6 +4,8 @@ import { AlertController, App, MenuController } from 'ionic-angular';
 import { AuthService } from '../../providers/auth.service';
 import { BaseComponent } from '../base.componente';
 
+import { UserProfilePage } from '../../pages/user-profile/user-profile';
+
 import { User } from 'firebase/app';
 
 
@@ -25,7 +27,7 @@ export class UserMenuComponent extends BaseComponent {
   }
 
   onProfile(): void {
-    //this.navCtrl.push(UserProfilePage);
+    this.navCtrl.push(UserProfilePage);
   }
 
 

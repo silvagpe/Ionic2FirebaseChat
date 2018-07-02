@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, MenuController } from 'ionic-angular';
 
 import * as firebase from 'firebase/app';
 import { Observable } from 'rxjs';
@@ -27,6 +27,7 @@ export class HomePage {
   constructor(
     public authService: AuthService,
     public chatService: ChatService,
+    public menuCtrl: MenuController,
     public navCtrl: NavController,
     public userService: UserService) {
 
@@ -96,6 +97,37 @@ export class HomePage {
     this.chats = this.chatService.mapListKeys<Chat>(this.chatService.chats)
       .map((chats: Chat[]) => chats.reverse());
 
+    this.menuCtrl.enable(true, 'user-menu');
+
+  }
+
+  filterItems(event: any): void {
+    let searchTerm: string = event.target.value;
+
+    this.chats = this
+      .chatService
+      .mapListKeys<Chat>(this.chatService.chats)
+      .map((chats: Chat[]) => chats.reverse());
+
+    this.users = this.userService.users;
+
+    if (searchTerm) {
+
+      switch (this.view) {
+
+        case 'chats':
+          this.chats = this.chats
+            .map((chats: Chat[]) => chats.filter((chat: Chat) => (chat.title && chat.title.toLowerCase().indexOf(searchTerm.toLocaleLowerCase()) > -1)));
+          break;
+
+        case 'users':
+          this.users = this.users
+            .map((users: User[]) => users.filter((user: User) => (user.name.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1)));
+          break;
+
+      }
+
+    }
 
   }
 

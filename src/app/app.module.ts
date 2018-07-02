@@ -23,6 +23,8 @@ import { UserService } from './../providers/user.service';
 import { CapitalizePipe } from './../pipes/capitalize.pipe';
 import { CustomLoggedHeaderComponent } from '../components/custom-logged-header/custom-logged-header';
 import { MessageBoxComponent } from './../components/message-box/message-box';
+import { UserInfoComponent } from './../components/user-info/user-info';
+import { UserMenuComponent } from './../components/user-menu/user-menu';
 
 
 
@@ -44,7 +46,9 @@ const firebaseAppConfig: FirebaseAppConfig = {
     MessageBoxComponent,
     MyApp,
     SigninPage,
-    SignupPage
+    SignupPage,
+    UserInfoComponent,
+    UserMenuComponent
   ],
   imports: [
     AngularFireModule.initializeApp(firebaseAppConfig),

@@ -4,6 +4,8 @@ import { App, AlertController, MenuController } from 'ionic-angular';
 import { AuthService } from '../../providers/auth.service';
 import { BaseComponent } from '../base.componente';
 
+import { User } from '../../models/user.model';
+
 
 @Component({
   selector: 'custom-logged-header',
@@ -12,6 +14,7 @@ import { BaseComponent } from '../base.componente';
 export class CustomLoggedHeaderComponent extends BaseComponent {
 
   @Input() title: string;
+  @Input() user: User;
 
   constructor(
     public alertCtrl: AlertController,

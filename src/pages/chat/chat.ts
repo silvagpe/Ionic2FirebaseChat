@@ -63,9 +63,14 @@ export class ChatPage {
         this.chat1 = this.chatService.getDeepChat(this.sender.$key, this.recipient.$key);
         this.chat2 = this.chatService.getDeepChat(this.recipient.$key, this.sender.$key);
 
-        //Retorna as mensagems do chat
-        this.messages = this.messageService
-          .getMessages(this.sender.$key, this.recipient.$key);
+        if (this.recipient.photo) {
+          this.chatService
+            .mapObjectKey(this.chat1)
+            .first()
+            .subscribe((chat: Chat) => {
+              this.chatService.updatePhoto(this.chat1, chat.photo, this.recipient.photo);
+            });
+        }
 
         let doSubscription = () => {
           this.viewMessages = this.messageService.mapListKeys<Message>(this.messages);
@@ -74,6 +79,10 @@ export class ChatPage {
               this.scrollToBottom();
             });
         };
+
+        //Retorna as mensagems do chat
+        this.messages = this.messageService
+          .getMessages(this.sender.$key, this.recipient.$key);
 
         //Caso não exista mensagens para o conjunto de chaves, tenta consutlar
         //pelo conjunto inverso.
